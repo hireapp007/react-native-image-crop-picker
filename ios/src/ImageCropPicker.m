@@ -49,6 +49,9 @@
 #define ERROR_CANNOT_PROCESS_VIDEO_KEY @"E_CANNOT_PROCESS_VIDEO"
 #define ERROR_CANNOT_PROCESS_VIDEO_MSG @"Cannot process video data"
 
+#define ERROR_CANNOT_GET_FILE_URL_REPRESENTATION_TYPE_IDENTIFIER_KEY @"E_CANNOT_GET_FILE_URL_REPRESENTATION_TYPE_IDENTIFIER"
+#define ERROR_CANNOT_GET_FILE_URL_REPRESENTATION_TYPE_IDENTIFIER_MSG @"Cannot get url for file representation type identifier"
+
 #import "UIImage+Resize.h"
 #import "UIImage+Extension.h"
 #import "Compression.h"
@@ -1048,13 +1051,22 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
                     }];
                 }];
             } else if ([provider canLoadObjectOfClass:[UIImage class]]) {
-                NSString *identifier = provider.registeredTypeIdentifiers.firstObject;
+                NSString *identifier = provider.registeredTypeIdentifiers.lastObject;
                 if ([identifier isEqualToString:@"com.apple.live-photo-bundle"]) {
                     // Handle live photos
                     identifier = @"public.jpeg";
                 }
                 [provider loadFileRepresentationForTypeIdentifier:identifier
                                                 completionHandler:^(NSURL * _Nullable url, NSError * _Nullable error) {
+                    if (url == nil) {
+                        self.reject(
+                                    ERROR_CANNOT_GET_FILE_URL_REPRESENTATION_TYPE_IDENTIFIER_KEY,
+                                    ERROR_CANNOT_GET_FILE_URL_REPRESENTATION_TYPE_IDENTIFIER_MSG,
+                                    nil
+                                    );
+                        return;
+                    }
+                    
                     [lock lock];
                     
                     NSURL *targetURL = [self copyFileFromURL:url];
