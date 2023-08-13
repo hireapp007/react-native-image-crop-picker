@@ -247,15 +247,13 @@ RCT_EXPORT_METHOD(openPicker:(NSDictionary *)options
     self.currentSelectionMode = PICKER;
     
     if (@available(iOS 14, *)) {
-        if (![self.options[@"cropperCircleOverlay"] boolValue] && ![self.options[@"cropping"] boolValue]) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                PHPickerConfiguration *configuration = [self makeConfiguration];
-                PHPickerViewController *controller = [[PHPickerViewController alloc] initWithConfiguration:configuration];
-                controller.delegate = self;
-                [[self getRootVC] presentViewController:controller animated:YES completion:nil];
-            });
-            return;
-        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            PHPickerConfiguration *configuration = [self makeConfiguration];
+            PHPickerViewController *controller = [[PHPickerViewController alloc] initWithConfiguration:configuration];
+            controller.delegate = self;
+            [[self getRootVC] presentViewController:controller animated:YES completion:nil];
+        });
+        return;
     }
     
     [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
