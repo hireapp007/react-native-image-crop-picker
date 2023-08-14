@@ -1091,9 +1091,21 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
                         dispatch_async(dispatch_get_main_queue(), ^{
                             [indicatorView stopAnimating];
                             [overlayView removeFromSuperview];
-                            [picker dismissViewControllerAnimated:[self.options[@"waitAnimationEnd"] boolValue] completion:^{
-                                self.resolve(selection);
-                            }];
+                            if ([self.options[@"multiple"] boolValue]) {
+                                [picker dismissViewControllerAnimated:[self.options[@"waitAnimationEnd"] boolValue] completion:^{
+                                    self.resolve(selection);
+                                }];
+                            } else {
+                                [picker dismissViewControllerAnimated:NO completion:nil];
+                                [self processSingleImagePick:[UIImage imageWithData:imageResult.data]
+                                                    withExif: exif
+                                          withViewController:picker
+                                               withSourceURL:[targetURL absoluteString]
+                                         withLocalIdentifier:provider.suggestedName
+                                                withFilename:url.lastPathComponent
+                                            withCreationDate:[self dateForFileAtURL:url key:NSURLCreationDateKey]
+                                        withModificationDate:[self dateForFileAtURL:url key:NSURLContentModificationDateKey]];
+                            }
                         });
                     }
                 }];
