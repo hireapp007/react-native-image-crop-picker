@@ -767,14 +767,6 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
             [controller dismissViewControllerAnimated:YES completion:completion];
             break;
         case PICKER:
-            if (selectionDone) {
-                [controller.presentingViewController.presentingViewController dismissViewControllerAnimated:YES completion:completion];
-            } else {
-                // if user opened picker, tried to crop image, and cancelled cropping
-                // return him to the image selection instead of returning him to the app
-                [controller.presentingViewController dismissViewControllerAnimated:YES completion:completion];
-            }
-            break;
         case CAMERA:
             [controller.presentingViewController.presentingViewController dismissViewControllerAnimated:YES completion:completion];
             break;
@@ -1096,7 +1088,6 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
                                     self.resolve(selection);
                                 }];
                             } else {
-                                [picker dismissViewControllerAnimated:NO completion:nil];
                                 [self processSingleImagePick:[UIImage imageWithData:imageResult.data]
                                                     withExif: exif
                                           withViewController:picker
