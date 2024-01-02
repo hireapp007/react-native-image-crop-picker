@@ -1029,7 +1029,7 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
                     }];
                 }];
             } else if ([provider canLoadObjectOfClass:[UIImage class]]) {
-                NSString *identifier = provider.registeredTypeIdentifiers.lastObject;
+                NSString *identifier = provider.registeredTypeIdentifiers.firstObject;
                 if ([identifier isEqualToString:@"com.apple.live-photo-bundle"]) {
                     // Handle live photos
                     identifier = @"public.jpeg";
